@@ -10,7 +10,7 @@ import br.com.usinasantafe.pepi.to.tb.variaveis.EntregaEPITO;
 public class PEPIContext extends Application {
 
     private EntregaEPITO entregaEPITO;
-    public static String versaoAplic = "1.5";
+    public static String versaoAplic = "1.6";
 
     @Override
     public void onCreate() {
