@@ -18,7 +18,7 @@
         android:text="@string/texto_num_linha_config" />
 
     <EditText
-        android:id="@+id/editTextLinhaConfig"
+        android:id="@+id/editTextNroAparelhoConfig"
         style="@style/EditView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,6 +56,5 @@
         android:layout_height="wrap_content"
         android:text="@string/texto_atual_dados"
         />
-
 
 </LinearLayout>

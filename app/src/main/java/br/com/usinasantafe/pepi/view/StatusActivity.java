@@ -26,7 +26,7 @@ public class StatusActivity extends ActivityGeneric {
 
         Button buttonRetStatus = findViewById(R.id.buttonRetStatus);
 
-        ArrayList<String> itens = new ArrayList<String>();
+        ArrayList<String> itens = new ArrayList<>();
 
         itens.add("ENTREGA");
         itens.add("REPOSIÇÃO");
@@ -36,40 +36,29 @@ public class StatusActivity extends ActivityGeneric {
         lista = findViewById(R.id.listViewStatus);
         lista.setAdapter(adapterList);
 
-        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lista.setOnItemClickListener((l, v, position, id) -> {
 
-            @Override
-            public void onItemClick(AdapterView<?> l, View v, int position,
-                                    long id) {
-
-                if (position == 0) {
-                    pepiContext.getEntregaEPICTR().getEntregaEPIBean().setStatus(0L);
-                } else if (position == 1) {
-                    pepiContext.getEntregaEPICTR().getEntregaEPIBean().setStatus(2L);
-                } else if (position == 2) {
-                    pepiContext.getEntregaEPICTR().getEntregaEPIBean().setStatus(3L);
-                }
-
-                pepiContext.getEntregaEPICTR().salvarEntregaEPI();
-
-                Intent it = new Intent(StatusActivity.this, ListaApontaActivity.class);
-                startActivity(it);
-                finish();
-
+            if (position == 0) {
+                pepiContext.getEntregaEPICTR().getEntregaEPIBean().setStatus(0L);
+            } else if (position == 1) {
+                pepiContext.getEntregaEPICTR().getEntregaEPIBean().setStatus(2L);
+            } else if (position == 2) {
+                pepiContext.getEntregaEPICTR().getEntregaEPIBean().setStatus(3L);
             }
+
+            pepiContext.getEntregaEPICTR().salvarEntregaEPI();
+
+            Intent it = new Intent(StatusActivity.this, ListaApontActivity.class);
+            startActivity(it);
+            finish();
 
         });
 
-        buttonRetStatus.setOnClickListener(new View.OnClickListener() {
+        buttonRetStatus.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-
-                Intent it = new Intent( StatusActivity.this, MotivoActivity.class);
-                startActivity(it);
-                finish();
-
-            }
+            Intent it = new Intent( StatusActivity.this, MotivoActivity.class);
+            startActivity(it);
+            finish();
 
         });
 

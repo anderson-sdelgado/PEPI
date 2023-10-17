@@ -11,6 +11,11 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import br.com.usinasantafe.pepi.util.VerifDadosServ;
 
 /**
@@ -19,8 +24,6 @@ import br.com.usinasantafe.pepi.util.VerifDadosServ;
 public class PostVerGenerico extends AsyncTask<String, Void, String> {
 
     private Map<String, Object> parametrosPost = null;
-    private VerifDadosServ verifDadosServ;
-    private String tipo;
 
     public PostVerGenerico() {
     }
@@ -37,10 +40,14 @@ public class PostVerGenerico extends AsyncTask<String, Void, String> {
 
             String parametros = getQueryString(parametrosPost);
             URL urlCon = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) urlCon.openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) urlCon.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoInput(true);
             connection.setDoOutput(true);
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts(), new java.security.SecureRandom());
+            connection.setSSLSocketFactory(sc.getSocketFactory());
+            connection.setHostnameVerifier((s, sslSession) -> true);
             connection.connect();
 
             OutputStream out = connection.getOutputStream();
@@ -102,14 +109,14 @@ public class PostVerGenerico extends AsyncTask<String, Void, String> {
         this.parametrosPost = parametrosPost;
     }
 
-    private String getQueryString(Map<String, Object> params) throws Exception {
+    private String getQueryString(Map<String, Object> params){
         if (params == null || params.size() == 0) {
             return null;
         }
         String urlParams = null;
-        Iterator<String> e = (Iterator<String>) params.keySet().iterator();
+        Iterator<String> e = params.keySet().iterator();
         while (e.hasNext()) {
-            String chave = (String) e.next();
+            String chave = e.next();
             Object objValor = params.get(chave);
             String valor = objValor.toString();
             urlParams = urlParams == null ? "" : urlParams + "&";
@@ -118,8 +125,17 @@ public class PostVerGenerico extends AsyncTask<String, Void, String> {
         return urlParams;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public TrustManager[] trustAllCerts(){
+        return new TrustManager[]{
+                new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers()
+                    {
+                        return null;
+                    }
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+                }
+        };
     }
 
 }

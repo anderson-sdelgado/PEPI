@@ -22,10 +22,10 @@ public class ConfigDAO {
         return configBean;
     }
 
-    public void salvarConfig(String senha){
+    public void salvarConfig(Long nroAparelho){
         ConfigBean configBean = new ConfigBean();
         configBean.deleteAll();
-        configBean.setNumLinha(Long.valueOf(senha));
+        configBean.setNroAparelhoConfig(nroAparelho);
         configBean.insert();
         configBean.commit();
     }

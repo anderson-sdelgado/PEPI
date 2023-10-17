@@ -10,8 +10,8 @@ android {
         applicationId "br.com.usinasantafe.pepi"
         minSdkVersion 22
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "2.02"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -36,4 +36,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.google.android.gms:play-services-location:19.0.1'
+    implementation 'com.google.guava:guava:32.1.2-android'
 }

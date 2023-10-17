@@ -1,6 +1,5 @@
 package br.com.usinasantafe.pepi.view;
 
-//import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -30,7 +29,7 @@ public class MotivoActivity extends ActivityGeneric {
 
         Button buttonRetMotivo = findViewById(R.id.buttonRetMotivo);
 
-        ArrayList<String> itens = new ArrayList<String>();
+        ArrayList<String> itens = new ArrayList<>();
 
         motivoList =  pepiContext.getEntregaEPICTR().motivoList();
 
@@ -42,30 +41,20 @@ public class MotivoActivity extends ActivityGeneric {
         lista = findViewById(R.id.listViewMotivo);
         lista.setAdapter(adapterList);
 
-        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> l, View v, int position,
-                                    long id) {
+        lista.setOnItemClickListener((l, v, position, id) -> {
 
-                MotivoBean motivoBean = motivoList.get(position);
-                pepiContext.getEntregaEPICTR().getEntregaEPIBean().setMotivo(motivoBean.getIdMotivo());
-                Intent it = new Intent(MotivoActivity.this, StatusActivity.class);
-                startActivity(it);
-                finish();
-
-            }
+            MotivoBean motivoBean = motivoList.get(position);
+            pepiContext.getEntregaEPICTR().getEntregaEPIBean().setMotivo(motivoBean.getIdMotivo());
+            Intent it = new Intent(MotivoActivity.this, StatusActivity.class);
+            startActivity(it);
+            finish();
 
         });
 
-        buttonRetMotivo.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent( MotivoActivity.this, EPIActivity.class);
-                startActivity(it);
-                finish();
-
-            }
+        buttonRetMotivo.setOnClickListener(v -> {
+            Intent it = new Intent( MotivoActivity.this, EPIActivity.class);
+            startActivity(it);
+            finish();
 
         });
 

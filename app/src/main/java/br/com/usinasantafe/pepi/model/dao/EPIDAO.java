@@ -9,23 +9,46 @@ public class EPIDAO {
     public EPIDAO() {
     }
 
-    private List getEPIList(String codEPI){
+    public EPIBean updateQtdeEPI(Long idEPI){
+        List<EPIBean> epiList = getEPIListId(idEPI);
+        EPIBean equipBean = epiList.get(0);
+        equipBean.setQtdeEPI(equipBean.getQtdeEPI() - 1);
+        equipBean.update();
+        epiList.clear();
+        return equipBean;
+    }
+
+    private List<EPIBean> getEPIListCod(String codEPI){
         EPIBean epiBean = new EPIBean();
         return epiBean.get("codEPI", codEPI);
     }
 
+    private List<EPIBean> getEPIListId(Long idEPI){
+        EPIBean epiBean = new EPIBean();
+        return epiBean.get("idEPI", idEPI);
+    }
+
     public boolean verEPI(String codEPI){
-        List epiList = getEPIList(codEPI);
+        List<EPIBean> epiList = getEPIListCod(codEPI);
         boolean ret = epiList.size() > 0;
         epiList.clear();
         return ret;
     }
 
-    public EPIBean getEPI(String codEPI){
-        List epiList = getEPIList(codEPI);
+    public  boolean verQtdeEPI(String codEPI){
+        List epiList = getEPIListCod(codEPI);
         EPIBean equipBean = (EPIBean) epiList.get(0);
+        boolean ret = equipBean.getQtdeEPI() > 0;
+        epiList.clear();
+        return ret;
+    }
+
+    public EPIBean getEPI(String codEPI){
+        List<EPIBean> epiList = getEPIListCod(codEPI);
+        EPIBean equipBean = epiList.get(0);
         epiList.clear();
         return equipBean;
     }
+
 
 }

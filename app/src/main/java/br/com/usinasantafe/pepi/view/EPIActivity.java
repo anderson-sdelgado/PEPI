@@ -1,5 +1,7 @@
 package br.com.usinasantafe.pepi.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 //import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,32 +33,22 @@ public class EPIActivity extends ActivityGeneric {
         Button buttonOkEPI = findViewById(R.id.buttonOkEPI);
         Button buttonCancEPI = findViewById(R.id.buttonCancEPI);
 
-        buttonOkEPI.setOnClickListener(new View.OnClickListener() {
+        buttonOkEPI.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-
-                if(!epiBean.getDescrEPI().equals("")){
-                    pepiContext.getEntregaEPICTR().getEntregaEPIBean().setEpi(epiBean.getIdEPI());
-                    Intent it = new Intent(EPIActivity.this, MotivoActivity.class);
-                    startActivity(it);
-                    finish();
-                }
-
+            if(!epiBean.getDescrEPI().equals("")){
+                pepiContext.getEntregaEPICTR().getEntregaEPIBean().setEpi(epiBean.getIdEPI());
+                Intent it = new Intent(EPIActivity.this, MotivoActivity.class);
+                startActivity(it);
+                finish();
             }
 
         });
 
-        buttonCancEPI.setOnClickListener(new View.OnClickListener() {
+        buttonCancEPI.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-
-                Intent it = new Intent(EPIActivity.this, RecebedorActivity.class);
-                startActivity(it);
-                finish();
-
-            }
+            Intent it = new Intent(EPIActivity.this, RecebedorActivity.class);
+            startActivity(it);
+            finish();
 
         });
 
@@ -73,8 +65,24 @@ public class EPIActivity extends ActivityGeneric {
         if(REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             epiBean.setCodEPI(data.getStringExtra("SCAN_RESULT"));
             if (pepiContext.getEntregaEPICTR().verEPI(epiBean.getCodEPI())) {
-                epiBean = pepiContext.getEntregaEPICTR().getEPI(epiBean.getCodEPI());
-                txResult.setText("EPI:\nCODIGO: " + epiBean.getCodEPI() + "\n" + epiBean.getDescrEPI());
+                if (pepiContext.getEntregaEPICTR().verQtdeEPI(epiBean.getCodEPI())) {
+                    epiBean = pepiContext.getEntregaEPICTR().getEPI(epiBean.getCodEPI());
+                    txResult.setText("EPI:\nCODIGO: " + epiBean.getCodEPI() + "\n" + epiBean.getDescrEPI());
+                } else {
+                    AlertDialog.Builder alerta = new AlertDialog.Builder( EPIActivity.this);
+                    alerta.setTitle("ATENÇÃO");
+                    alerta.setMessage("EPI COM QTDE ZERADA NO ESTOQUE!");
+                    alerta.setPositiveButton("OK", (dialog, which) -> {
+                    });
+                    alerta.show();
+                }
+            } else {
+                AlertDialog.Builder alerta = new AlertDialog.Builder( EPIActivity.this);
+                alerta.setTitle("ATENÇÃO");
+                alerta.setMessage("EPI INEXISTENTE NO ESTOQUE!");
+                alerta.setPositiveButton("OK", (dialog, which) -> {
+                });
+                alerta.show();
             }
         }
     }

@@ -13,8 +13,7 @@ public class PEPIContext extends Application {
 
     private ConfigCTR configCTR;
     private EntregaEPICTR entregaEPICTR;
-    public static String versaoAPP = "2.00";
-    public static String versaoWS = "2.00";
+    public static String versaoWS = "2.02";
 
     @Override
     public void onCreate() {

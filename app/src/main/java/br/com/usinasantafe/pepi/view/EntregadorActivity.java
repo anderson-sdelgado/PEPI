@@ -1,6 +1,5 @@
 package br.com.usinasantafe.pepi.view;
 
-//import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
         import android.view.View;
@@ -31,32 +30,22 @@ public class EntregadorActivity extends ActivityGeneric {
         Button buttonOkEntregador = findViewById(R.id.buttonOkEntregador);
         Button buttonCancEntregador = findViewById(R.id.buttonCancEntregador);
 
-        buttonOkEntregador.setOnClickListener(new View.OnClickListener() {
+        buttonOkEntregador.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-
-                if(!funcBean.getNomeFunc().equals("")) {
-                    pepiContext.getEntregaEPICTR().setMatricEntregador(funcBean.getMatricFunc());
-                    Intent it = new Intent(EntregadorActivity.this, ListaApontaActivity.class);
-                    startActivity(it);
-                    finish();
-                }
-
+            if(!funcBean.getNomeFunc().equals("")) {
+                pepiContext.getEntregaEPICTR().setMatricEntregador(funcBean.getMatricFunc());
+                Intent it = new Intent(EntregadorActivity.this, ListaApontActivity.class);
+                startActivity(it);
+                finish();
             }
 
         });
 
-        buttonCancEntregador.setOnClickListener(new View.OnClickListener() {
+        buttonCancEntregador.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-
-                Intent it = new Intent(EntregadorActivity.this, ListaApontaActivity.class);
-                startActivity(it);
-                finish();
-
-            }
+            Intent it = new Intent(EntregadorActivity.this, ListaApontActivity.class);
+            startActivity(it);
+            finish();
 
         });
 

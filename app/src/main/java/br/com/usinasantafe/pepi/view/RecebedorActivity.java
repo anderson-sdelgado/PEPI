@@ -1,6 +1,5 @@
 package br.com.usinasantafe.pepi.view;
 
-//import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -32,33 +31,23 @@ public class RecebedorActivity extends ActivityGeneric {
         Button buttonOkRecebedor = findViewById(R.id.buttonOkRecebedor);
         Button buttonCancRecebedor = findViewById(R.id.buttonCancRecebedor);
 
-        buttonOkRecebedor.setOnClickListener(new View.OnClickListener() {
+        buttonOkRecebedor.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-
-                if(!funcBean.getNomeFunc().equals("")) {
-                    pepiContext.getEntregaEPICTR().setEntregaEPIBean(new EntregaEPIBean());
-                    pepiContext.getEntregaEPICTR().getEntregaEPIBean().setMatricRecebedor(funcBean.getMatricFunc());
-                    Intent it = new Intent(RecebedorActivity.this, EPIActivity.class);
-                    startActivity(it);
-                    finish();
-                }
-
+            if(!funcBean.getNomeFunc().equals("")) {
+                pepiContext.getEntregaEPICTR().setEntregaEPIBean(new EntregaEPIBean());
+                pepiContext.getEntregaEPICTR().getEntregaEPIBean().setMatricRecebedor(funcBean.getMatricFunc());
+                Intent it = new Intent(RecebedorActivity.this, EPIActivity.class);
+                startActivity(it);
+                finish();
             }
 
         });
 
-        buttonCancRecebedor.setOnClickListener(new View.OnClickListener() {
+        buttonCancRecebedor.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
-
-                Intent it = new Intent(RecebedorActivity.this, ListaApontaActivity.class);
-                startActivity(it);
-                finish();
-
-            }
+            Intent it = new Intent(RecebedorActivity.this, ListaApontActivity.class);
+            startActivity(it);
+            finish();
 
         });
 

@@ -1,6 +1,7 @@
 package br.com.usinasantafe.pepi.util;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -10,6 +11,7 @@ import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.usinasantafe.pepi.control.ConfigCTR;
 import br.com.usinasantafe.pepi.model.dao.ConfigDAO;
 import br.com.usinasantafe.pepi.util.conHttp.PostVerGenerico;
 import br.com.usinasantafe.pepi.view.MenuInicialActivity;
@@ -23,9 +25,14 @@ public class VerifDadosServ {
 
     private static VerifDadosServ instance = null;
     private UrlsConexaoHttp urlsConexaoHttp;
-    private String tipo;
+    private Context telaAtual;
+    private Class telaProx;
+    private ProgressDialog progressDialog;
+    private String dados;
+    private String classe;
     private MenuInicialActivity menuInicialActivity;
     private PostVerGenerico postVerGenerico;
+    public static int status; //1 - Existe Dados para Enviar; 2 - Enviando; 3 - Todos os Dados Foram Enviados;
 
     public static VerifDadosServ getInstance() {
         if (instance == null)
@@ -37,8 +44,6 @@ public class VerifDadosServ {
 
         if (!result.equals("")) {
             retornoVerifNormal(result);
-        } else {
-            this.menuInicialActivity.finalizarAtualAplic();
         }
 
     }
@@ -46,50 +51,36 @@ public class VerifDadosServ {
     public void retornoVerifNormal(String result) {
 
         try {
-            if(this.tipo.equals("Atualiza")) {
-                String verAtualizacao = result.trim();
-                if(verAtualizacao.equals("S")){
-                    AtualizarAplicativo atualizarAplicativo = new AtualizarAplicativo();
-                    atualizarAplicativo.setContext(this.menuInicialActivity);
-                    atualizarAplicativo.execute();
-                }
-                else{
-                    this.menuInicialActivity.finalizarAtualAplic();
-                }
+            ConfigCTR configCTR = new ConfigCTR();
+            if(this.classe.equals("Token")) {
+                configCTR.recToken(result.trim(), this.telaAtual, this.progressDialog);
             }
         } catch (Exception e) {
-            this.menuInicialActivity.finalizarAtualAplic();
             Log.i("PMM", "Erro Manip = " + e);
         }
 
     }
 
-    public void verAtualAplic(String versaoAplic, MenuInicialActivity menuInicialActivity, ProgressDialog progressDialog) {
+    public void salvarToken(String dados, Context telaAtual, ProgressDialog progressDialog) {
 
         urlsConexaoHttp = new UrlsConexaoHttp();
-        this.tipo = "Atualiza";
-        this.menuInicialActivity = menuInicialActivity;
+        this.classe = "Token";
+        this.telaAtual = telaAtual;
+        this.progressDialog = progressDialog;
+        this.dados = dados;
 
-        AtualAplicBean atualAplicBean = new AtualAplicBean();
-        atualAplicBean.setVersaoAtual(versaoAplic);
+        envioVerif();
 
-        ConfigDAO configDAO = new ConfigDAO();
-        atualAplicBean.setIdCelularAtual(configDAO.getConfig().getNumLinha());
+    }
 
-        JsonArray jsonArray = new JsonArray();
+    public void envioVerif() {
 
-        Gson gson = new Gson();
-        jsonArray.add(gson.toJsonTree(atualAplicBean, atualAplicBean.getClass()));
-
-        JsonObject json = new JsonObject();
-        json.add("dados", jsonArray);
-
-        Log.i("PMM", "LISTA = " + json.toString());
-
-        String[] url = {urlsConexaoHttp.urlVerifica(tipo)};
+        this.urlsConexaoHttp = new UrlsConexaoHttp();
+        String[] url = {urlsConexaoHttp.urlVerifica(classe)};
         Map<String, Object> parametrosPost = new HashMap<String, Object>();
-        parametrosPost.put("dado", json.toString());
+        parametrosPost.put("dado", this.dados);
 
+        Log.i("PCO", "postVerGenerico.execute('" + urlsConexaoHttp.urlVerifica(classe) + "'); - Dados de Envio = " + this.dados);
         postVerGenerico = new PostVerGenerico();
         postVerGenerico.setParametrosPost(parametrosPost);
         postVerGenerico.execute(url);

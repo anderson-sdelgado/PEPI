@@ -1,5 +1,9 @@
 package br.com.usinasantafe.pepi.control;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.usinasantafe.pepi.model.bean.estaticas.EPIBean;
@@ -10,6 +14,7 @@ import br.com.usinasantafe.pepi.model.dao.EPIDAO;
 import br.com.usinasantafe.pepi.model.dao.EntregaEPIDAO;
 import br.com.usinasantafe.pepi.model.dao.FuncDAO;
 import br.com.usinasantafe.pepi.model.dao.MotivoDAO;
+import br.com.usinasantafe.pepi.util.AtualDadosServ;
 import br.com.usinasantafe.pepi.util.EnvioDadosServ;
 
 public class EntregaEPICTR {
@@ -22,7 +27,9 @@ public class EntregaEPICTR {
 
     public void salvarEntregaEPI(){
         EntregaEPIDAO entregaEPIDAO = new EntregaEPIDAO();
+        EPIDAO epiDAO = new EPIDAO();
         entregaEPIBean.setMatricEntregador(matricEntregador);
+        epiDAO.updateQtdeEPI(entregaEPIBean.getEpi());
         entregaEPIDAO.salvarEntregaEPI(entregaEPIBean);
         EnvioDadosServ.getInstance().envioDados();
     }
@@ -47,6 +54,11 @@ public class EntregaEPICTR {
     public boolean verEPI(String codEPI){
         EPIDAO epiDAO = new EPIDAO();
         return epiDAO.verEPI(codEPI);
+    }
+
+    public boolean verQtdeEPI(String codEPI){
+        EPIDAO epiDAO = new EPIDAO();
+        return epiDAO.verQtdeEPI(codEPI);
     }
 
     public boolean verEntregaEPI(){
@@ -96,6 +108,18 @@ public class EntregaEPICTR {
 
     public void setMatricEntregador(Long matricEntregador) {
         this.matricEntregador = matricEntregador;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    public void atualEpi(Context telaAtual, ProgressDialog progressDialog) {
+        AtualDadosServ.getInstance().atualEpiDados(classeEPI(), telaAtual, progressDialog);
+    }
+
+    public ArrayList<String> classeEPI() {
+        ArrayList<String> classeArrayList = new ArrayList();
+        classeArrayList.add("EPIBean");
+        return classeArrayList;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////

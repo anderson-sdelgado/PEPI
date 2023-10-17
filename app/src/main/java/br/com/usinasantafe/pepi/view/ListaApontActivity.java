@@ -18,7 +18,7 @@ import br.com.usinasantafe.pepi.PEPIContext;
 import br.com.usinasantafe.pepi.R;
 import br.com.usinasantafe.pepi.util.EnvioDadosServ;
 
-public class ListaApontaActivity extends ActivityGeneric {
+public class ListaApontActivity extends ActivityGeneric {
 
     private ListView apontaListView;
     private PEPIContext pepiContext;
@@ -28,7 +28,7 @@ public class ListaApontaActivity extends ActivityGeneric {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_aponta);
+        setContentView(R.layout.activity_lista_apont);
 
         Button buttonRetApontamento = findViewById(R.id.buttonRetApontamento);
         textViewProcesso = findViewById(R.id.textViewProcesso);
@@ -37,7 +37,7 @@ public class ListaApontaActivity extends ActivityGeneric {
 
         customHandler.postDelayed(updateTimerThread, 0);
 
-        ArrayList<String> itens = new ArrayList<String>();
+        ArrayList<String> itens = new ArrayList<>();
 
         itens.add("CADASTRAR ENTREGADOR");
         itens.add("ENTREGAR EPI");
@@ -46,52 +46,36 @@ public class ListaApontaActivity extends ActivityGeneric {
         apontaListView = findViewById(R.id.listViewApontamento);
         apontaListView.setAdapter(adapterList);
 
-        apontaListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        apontaListView.setOnItemClickListener((l, v, position, id) -> {
 
-            @Override
-            public void onItemClick(AdapterView<?> l, View v, int position,
-                                    long id) {
+            TextView textView = v.findViewById(R.id.textViewItemList);
+            String text = textView.getText().toString();
 
-                TextView textView = v.findViewById(R.id.textViewItemList);
-                String text = textView.getText().toString();
-
-                if (text.equals("CADASTRAR ENTREGADOR")) {
-                    Intent it = new Intent(ListaApontaActivity.this, EntregadorActivity.class);
-                    startActivity(it);
-                    finish();
-                } else if (text.equals("ENTREGAR EPI")) {
-                    if(pepiContext.getEntregaEPICTR().getMatricEntregador() > 0) {
-                        Intent it = new Intent(ListaApontaActivity.this, RecebedorActivity.class);
-                        startActivity(it);
-                        finish();
-                    }
-                    else{
-                        AlertDialog.Builder alerta = new AlertDialog.Builder( ListaApontaActivity.this);
-                        alerta.setTitle("ATENÇÃO");
-                        alerta.setMessage("FALTA DE ENTREGADOR. POR FAVOR, CADASTRE UM NOVO ENTREGADOR!");
-                        alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-
-                        alerta.show();
-                    }
-                }
-            }
-
-        });
-
-        buttonRetApontamento.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(ListaApontaActivity.this, MenuInicialActivity.class);
+            if (text.equals("CADASTRAR ENTREGADOR")) {
+                Intent it = new Intent(ListaApontActivity.this, EntregadorActivity.class);
                 startActivity(it);
                 finish();
-            }
+            } else if (text.equals("ENTREGAR EPI")) {
+                if(pepiContext.getEntregaEPICTR().getMatricEntregador() > 0) {
+                    Intent it = new Intent(ListaApontActivity.this, RecebedorActivity.class);
+                    startActivity(it);
+                    finish();
+                } else {
+                    AlertDialog.Builder alerta = new AlertDialog.Builder( ListaApontActivity.this);
+                    alerta.setTitle("ATENÇÃO");
+                    alerta.setMessage("FALTA DE ENTREGADOR. POR FAVOR, CADASTRE UM NOVO ENTREGADOR!");
+                    alerta.setPositiveButton("OK", (dialog, which) -> {
+                    });
 
+                    alerta.show();
+                }
+            }
+        });
+
+        buttonRetApontamento.setOnClickListener(v -> {
+            Intent it = new Intent(ListaApontActivity.this, MenuInicialActivity.class);
+            startActivity(it);
+            finish();
         });
 
     }

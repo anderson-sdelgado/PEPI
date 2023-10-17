@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="br.com.usinasantafe.pepi.view.ListaApontaActivity">
+    tools:context="br.com.usinasantafe.pepi.view.ListaApontActivity">
 
     <TextView
         android:id="@+id/textViewTituloApontamento"
@@ -25,16 +25,16 @@
         android:layout_weight="1">
     </ListView>
 
+    <TextView
+        android:id="@+id/textViewProcesso"
+        style="@style/TextViewItemList"
+        android:text="@string/texto_item_list" />
+
     <Button
         android:id="@+id/buttonRetApontamento"
         style="@style/BotaoAvulso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/texto_padrao_retorna" />
-
-    <TextView
-        android:id="@+id/textViewProcesso"
-        style="@style/TextViewItemList"
-        android:text="@string/texto_item_list" />
 
 </LinearLayout>

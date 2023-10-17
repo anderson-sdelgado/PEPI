@@ -19,6 +19,8 @@ public class EPIBean extends Entidade {
     private String codEPI;
     @DatabaseField
     private String descrEPI;
+    @DatabaseField
+    private Long qtdeEPI;
 
     public EPIBean() {
     }
@@ -45,5 +47,13 @@ public class EPIBean extends Entidade {
 
     public void setDescrEPI(String descrEPI) {
         this.descrEPI = descrEPI;
+    }
+
+    public Long getQtdeEPI() {
+        return qtdeEPI;
+    }
+
+    public void setQtdeEPI(Long qtdeEPI) {
+        this.qtdeEPI = qtdeEPI;
     }
 }

@@ -15,17 +15,16 @@ public class ConfigBean extends Entidade {
     private static final long serialVersionUID = 1L;
 
     @DatabaseField(id=true)
-    private Long numLinha;
+    private Long nroAparelhoConfig;
 
     public ConfigBean() {
     }
 
-    public Long getNumLinha() {
-        return numLinha;
+    public Long getNroAparelhoConfig() {
+        return nroAparelhoConfig;
     }
 
-    public void setNumLinha(Long numLinha) {
-        this.numLinha = numLinha;
+    public void setNroAparelhoConfig(Long nroAparelhoConfig) {
+        this.nroAparelhoConfig = nroAparelhoConfig;
     }
-    
 }

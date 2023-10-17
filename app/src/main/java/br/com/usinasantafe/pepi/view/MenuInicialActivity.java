@@ -1,7 +1,9 @@
 package br.com.usinasantafe.pepi.view;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,8 +19,10 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
+import br.com.usinasantafe.pepi.BuildConfig;
 import br.com.usinasantafe.pepi.PEPIContext;
 import br.com.usinasantafe.pepi.R;
+import br.com.usinasantafe.pepi.util.AtualDadosServ;
 import br.com.usinasantafe.pepi.util.EnvioDadosServ;
 import br.com.usinasantafe.pepi.util.VerifDadosServ;
 
@@ -28,6 +32,7 @@ public class MenuInicialActivity extends ActivityGeneric {
     private PEPIContext pepiContext;
     private ProgressDialog progressBar;
     private TextView textViewProcesso;
+    private TextView textViewPrincipal;
     private Handler customHandler = new Handler();
 
     @Override
@@ -37,6 +42,9 @@ public class MenuInicialActivity extends ActivityGeneric {
 
         pepiContext = (PEPIContext) getApplication();
         textViewProcesso = findViewById(R.id.textViewProcesso);
+        textViewPrincipal = findViewById(R.id.textViewPrincipal);
+
+        textViewPrincipal.setText("PRINCIPAL - V " + BuildConfig.VERSION_NAME);
 
         if(!checkPermission(Manifest.permission.CAMERA)){
             String[] PERMISSIONS = {android.Manifest.permission.CAMERA};
@@ -51,12 +59,10 @@ public class MenuInicialActivity extends ActivityGeneric {
         if(EnvioDadosServ.getInstance().verifDadosEnvio()){
             if(connectNetwork){
                 EnvioDadosServ.getInstance().envioDados();
-            }
-            else{
+            } else {
                 EnvioDadosServ.status = 1;
             }
-        }
-        else{
+        } else {
             EnvioDadosServ.status = 3;
         }
 
@@ -64,73 +70,72 @@ public class MenuInicialActivity extends ActivityGeneric {
 
         progressBar = new ProgressDialog(this);
 
-        atualizarAplic();
-
         listarMenuInicial();
 
     }
 
     public void listarMenuInicial(){
 
-        ArrayList<String> itens = new ArrayList<String>();
+        ArrayList<String> itens = new ArrayList<>();
 
         itens.add("APONTAMENTO");
         itens.add("CONFIGURAÇÃO");
+        itens.add("ATUALIZAR ESTOQUE");
         itens.add("SAIR");
 
         AdapterList adapterList = new AdapterList(this, itens);
         lista = findViewById(R.id.listaMenuInicial);
         lista.setAdapter(adapterList);
 
-        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lista.setOnItemClickListener((l, v, position, id) -> {
 
-            @Override
-            public void onItemClick(AdapterView<?> l, View v, int position,
-                                    long id) {
+            TextView textView = v.findViewById(R.id.textViewItemList);
+            String text = textView.getText().toString();
 
-                TextView textView = v.findViewById(R.id.textViewItemList);
-                String text = textView.getText().toString();
-
-                if (text.equals("APONTAMENTO")) {
-                    if(pepiContext.getEntregaEPICTR().hasElemFunc()){
-                        pepiContext.getEntregaEPICTR().setMatricEntregador(0L);
-                        Intent it = new Intent(MenuInicialActivity.this, ListaApontaActivity.class);
-                        startActivity(it);
-                        finish();
-                    }
-                } else if (text.equals("CONFIGURAÇÃO")) {
-                    Intent it = new Intent(MenuInicialActivity.this, ConfigActivity.class);
+            if (text.equals("APONTAMENTO")) {
+                if(pepiContext.getEntregaEPICTR().hasElemFunc()){
+                    pepiContext.getEntregaEPICTR().setMatricEntregador(0L);
+                    Intent it = new Intent(MenuInicialActivity.this, ListaApontActivity.class);
                     startActivity(it);
                     finish();
-                } else if (text.equals("SAIR")) {
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
                 }
-            }
+            } else if (text.equals("CONFIGURAÇÃO")) {
+                Intent it = new Intent(MenuInicialActivity.this, ConfigActivity.class);
+                startActivity(it);
+                finish();
+            } else if (text.equals("ATUALIZAR ESTOQUE")) {
 
+                if (connectNetwork) {
+
+                    progressBar = new ProgressDialog(MenuInicialActivity.this);
+                    progressBar.setCancelable(true);
+                    progressBar.setMessage("ATUALIZANDO ...");
+                    progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    progressBar.setProgress(0);
+                    progressBar.setMax(100);
+                    progressBar.show();
+
+                    pepiContext.getEntregaEPICTR().atualEpi(MenuInicialActivity.this, progressBar);
+
+                } else {
+
+                    AlertDialog.Builder alerta = new AlertDialog.Builder( MenuInicialActivity.this);
+                    alerta.setTitle("ATENÇÃO");
+                    alerta.setMessage("FALHA NA CONEXÃO DE DADOS. O CELULAR ESTA SEM SINAL. POR FAVOR, TENTE NOVAMENTE QUANDO O CELULAR ESTIVE COM SINAL.");
+                    alerta.setPositiveButton("OK", (dialog, which) -> {
+                    });
+                    alerta.show();
+
+                }
+
+            } else if (text.equals("SAIR")) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
         });
 
-    }
-
-    public void atualizarAplic(){
-        if(connectNetwork){
-            if (pepiContext.getConfigCTR().hasElements()) {
-                progressBar.setCancelable(true);
-                progressBar.setMessage("BUSCANDO ATUALIZAÇÃO...");
-                progressBar.show();
-                VerifDadosServ.getInstance().verAtualAplic(pepiContext.versaoAPP, this, progressBar);
-            }
-        } else {
-            finalizarAtualAplic();
-        }
-    }
-
-    public void finalizarAtualAplic() {
-        if(progressBar.isShowing()){
-            progressBar.dismiss();
-        }
     }
 
     public boolean checkPermission(String permission){

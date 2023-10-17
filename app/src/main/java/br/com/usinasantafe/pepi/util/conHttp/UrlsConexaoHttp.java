@@ -26,12 +26,8 @@ public class UrlsConexaoHttp {
 
 	public String urlVerifica(String classe) {
 		String retorno = "";
-		if (classe.equals("OS")) {
-			retorno = url + "veros.php";
-		} else if (classe.equals("Ativ")) {
-			retorno = url + "atualosativ.php";
-		} else if (classe.equals("Atualiza")) {
-			retorno = url + "atualaplic.php";
+		if (classe.equals("Token")) {
+			retorno = url + "aparelho.php";
 		}
 		return retorno;
 	}

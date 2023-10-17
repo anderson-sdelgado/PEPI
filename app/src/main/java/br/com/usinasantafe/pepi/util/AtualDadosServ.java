@@ -3,7 +3,6 @@ package br.com.usinasantafe.pepi.util;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -13,22 +12,24 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import br.com.usinasantafe.pepi.model.dao.AtualAplicDAO;
 import br.com.usinasantafe.pepi.model.pst.GenericRecordable;
-import br.com.usinasantafe.pepi.util.conHttp.GetBDGenerico;
+import br.com.usinasantafe.pepi.util.conHttp.PostBDGenerico;
 import br.com.usinasantafe.pepi.util.conHttp.UrlsConexaoHttp;
 
 public class AtualDadosServ {
 
 	private ArrayList tabAtualArrayList;
 	private static AtualDadosServ instance = null;
-	private int contAtualizaBD = 0;
+	private int contAtualBD = 0;
 	private String classe = "";
 	private ProgressDialog progressDialog;
 	private int qtdeBD = 0;
 	private GenericRecordable genericRecordable;
 	private Context telaAtual;
-	private Class telaProx;
 	private int tipoReceb;
 	private UrlsConexaoHttp urlsConexaoHttp;
 	
@@ -48,14 +49,15 @@ public class AtualDadosServ {
 		if(!result.equals("")){
 		
 			if(tipo.equals("datahorahttp")){
-				Tempo.getInstance().manipDataHora(result);
-			}
-			else{
-				
-				try{
 
-					Log.i("pepi", "TIPO -> " + tipo);
-					Log.i("pepi", "RESULT -> " + result);
+				Tempo.getInstance().manipDataHora(result);
+
+			} else {
+				
+				try {
+
+					Log.i("PEPI", "TIPO -> " + tipo);
+					Log.i("PEPI", "RESULT -> " + result);
 					
 					JSONObject jObj = new JSONObject(result);
 					JSONArray jsonArray = jObj.getJSONArray("dados");
@@ -70,26 +72,34 @@ public class AtualDadosServ {
 						
 					}
 					
-					Log.i("pepi", " SALVOU DADOS ");
+					Log.i("PEPI", " SALVOU DADOS ");
 					
-					if(contAtualizaBD > 0){
+					if(contAtualBD > 0){
 						atualizandoBD();
 					}
 				
-				} 
-				catch (Exception e) {
-				Log.i("ERRO", "Erro Manip = " + e);
+				} catch (Exception e) {
+					Log.i("PEPI", "Erro Manip = " + e);
 				}	
 				
 			}
 			
-		}
-		else{
+		} else {
 			encerrar();
 		}
 		
 	}
-	
+
+	public void atualEpiDados(ArrayList tabAtualArrayList, Context telaAtual, ProgressDialog progressDialog) {
+
+		this.tipoReceb = 1;
+		this.telaAtual = telaAtual;
+		this.progressDialog = progressDialog;
+		this.tabAtualArrayList = tabAtualArrayList;
+
+		startAtualizacao();
+
+	}
 
 	public void atualTodasTabBD(Context telaAtual, ProgressDialog progressDialog){
 		
@@ -98,7 +108,7 @@ public class AtualDadosServ {
 			this.tipoReceb = 1;
 			this.telaAtual = telaAtual;
 			this.progressDialog = progressDialog;
-			tabAtualArrayList = new ArrayList();
+			this.tabAtualArrayList = new ArrayList();
 	        Class<?> retClasse = Class.forName(urlsConexaoHttp.localUrl); 
 
 	        for (Field field : retClasse.getDeclaredFields()) {
@@ -109,94 +119,83 @@ public class AtualDadosServ {
 	            }
 	            
 	        }
-	        
-	        classe = (String) tabAtualArrayList.get(contAtualizaBD);
-			
-	        String[] url = {classe};
-			
-		    contAtualizaBD++;
 
-	        GetBDGenerico getBDGenerico = new GetBDGenerico();
-	        getBDGenerico.execute(url);
+			startAtualizacao();
 	        
 		} catch (Exception e) {
-			Log.i("ERRO", "Erro Manip2 = " + e);
+			Log.i("PEPI", "Erro Manip2 = " + e);
 		}
         
 	}
-	
+
+	public void startAtualizacao(){
+
+		classe = (String) tabAtualArrayList.get(contAtualBD);
+		String[] url = {classe};
+		contAtualBD++;
+
+		AtualAplicDAO atualAplicDAO = new AtualAplicDAO();
+		Map<String, Object> parametrosPost = new HashMap<>();
+		parametrosPost.put("dado", atualAplicDAO.getAtualBDToken());
+
+		PostBDGenerico postBDGenerico = new PostBDGenerico();
+		postBDGenerico.setParametrosPost(parametrosPost);
+		postBDGenerico.execute(url);
+
+	}
+
+
 	public void atualizandoBD(){
 
-		if(this.tipoReceb == 1){
+		if(this.tipoReceb == 1) {
 		
 			qtdeBD = tabAtualArrayList.size();
 			
-			if(contAtualizaBD < tabAtualArrayList.size()){
+			if(contAtualBD < tabAtualArrayList.size()){
 				
-				this.progressDialog.setProgress((contAtualizaBD * 100) / qtdeBD);
-		        classe = (String) tabAtualArrayList.get(contAtualizaBD);
-				String[] url = {classe};
-				contAtualizaBD++;
+				this.progressDialog.setProgress((contAtualBD * 100) / qtdeBD);
 
-				GetBDGenerico getBDGenerico = new GetBDGenerico();
-		        getBDGenerico.execute(url);
+				startAtualizacao();
 		        
-			}
-			else
-			{
+			} else {
+
 				this.progressDialog.dismiss();
-				contAtualizaBD = 0;
+				contAtualBD = 0;
 				AlertDialog.Builder alerta = new AlertDialog.Builder(this.telaAtual);
 				alerta.setTitle("ATENCAO");
 				alerta.setMessage("FOI ATUALIZADO COM SUCESSO OS DADOS.");
-				alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-	
-					}
+				alerta.setPositiveButton("OK", (dialog, which) -> {
 				});
 				
 				alerta.show();
+
 			}
 		
-		}
-		else if(this.tipoReceb == 2){
+		} else if(this.tipoReceb == 2) {
 			
 			qtdeBD = tabAtualArrayList.size();
 			
-			if(contAtualizaBD < tabAtualArrayList.size()){
-				
-		        classe = (String) tabAtualArrayList.get(contAtualizaBD);
-				String[] url = {classe};
-				contAtualizaBD++;
+			if(contAtualBD < tabAtualArrayList.size()){
 
-				GetBDGenerico getBDGenerico = new GetBDGenerico();
-		        getBDGenerico.execute(url);
+				startAtualizacao();
 		        
-			}
-			else
-			{
-				contAtualizaBD = 0;
+			} else {
+				contAtualBD = 0;
 			}
 			
 		}
 
 	}
 	
-	
 	public void encerrar(){
 		
-		if(this.tipoReceb == 1){
+		if(this.tipoReceb == 1) {
 			
 			this.progressDialog.dismiss();
 			AlertDialog.Builder alerta = new AlertDialog.Builder(this.telaAtual);
 			alerta.setTitle("ATENCAO");
 			alerta.setMessage("FALHA NA CONEXAO DE DADOS. O CELULAR ESTA SEM SINAL. POR FAVOR, TENTE NOVAMENTE QUANDO O CELULAR ESTIVE COM SINAL.");
-			alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-	
-				}
+			alerta.setPositiveButton("OK", (dialog, which) -> {
 			});
 			
 			alerta.show();
