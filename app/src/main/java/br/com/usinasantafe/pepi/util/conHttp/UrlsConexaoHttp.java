@@ -6,9 +6,9 @@ public class UrlsConexaoHttp {
 
 	public static String versao = "versao_" + PEPIContext.versaoWS.replace(".", "_");
 
-	public static String url = "https://www.usinasantafe.com.br/pepidev/view/";
+//	public static String url = "https://www.usinasantafe.com.br/pepidev/view/";
 //	public static String url = "https://www.usinasantafe.com.br/pepiqa/view/";
-//    public static String url = "https://www.usinasantafe.com.br/pepiprod/" + versao + "/view/";
+    public static String url = "https://www.usinasantafe.com.br/pepiprod/" + versao + "/view/";
 
 	public static String localPSTEstatica = "br.com.usinasantafe.pepi.model.bean.estaticas.";
 	public static String localUrl = "br.com.usinasantafe.pepi.util.conHttp.UrlsConexaoHttp";

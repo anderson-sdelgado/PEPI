@@ -31,7 +31,7 @@ public class PostBDGenerico extends AsyncTask<String, Void, String> {
 
     public static PostBDGenerico getInstance() {
         if (instance == null)
-        instance = new PostBDGenerico();
+        	instance = new PostBDGenerico();
         return instance;
     }
 

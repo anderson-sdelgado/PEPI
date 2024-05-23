@@ -3,6 +3,7 @@ package br.com.usinasantafe.pepi.util;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -19,6 +20,8 @@ import br.com.usinasantafe.pepi.model.dao.AtualAplicDAO;
 import br.com.usinasantafe.pepi.model.pst.GenericRecordable;
 import br.com.usinasantafe.pepi.util.conHttp.PostBDGenerico;
 import br.com.usinasantafe.pepi.util.conHttp.UrlsConexaoHttp;
+import br.com.usinasantafe.pepi.view.ListaApontActivity;
+import br.com.usinasantafe.pepi.view.MenuInicialActivity;
 
 public class AtualDadosServ {
 
@@ -165,6 +168,8 @@ public class AtualDadosServ {
 				alerta.setTitle("ATENCAO");
 				alerta.setMessage("FOI ATUALIZADO COM SUCESSO OS DADOS.");
 				alerta.setPositiveButton("OK", (dialog, which) -> {
+					Intent it = new Intent(telaAtual, MenuInicialActivity.class);
+					telaAtual.startActivity(it);
 				});
 				
 				alerta.show();

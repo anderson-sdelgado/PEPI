@@ -92,47 +92,52 @@ public class MenuInicialActivity extends ActivityGeneric {
             TextView textView = v.findViewById(R.id.textViewItemList);
             String text = textView.getText().toString();
 
-            if (text.equals("APONTAMENTO")) {
-                if(pepiContext.getEntregaEPICTR().hasElemFunc()){
-                    pepiContext.getEntregaEPICTR().setMatricEntregador(0L);
-                    Intent it = new Intent(MenuInicialActivity.this, ListaApontActivity.class);
+            switch (text) {
+                case "APONTAMENTO":
+                    if (pepiContext.getEntregaEPICTR().hasElemFunc()) {
+                        pepiContext.getEntregaEPICTR().setMatricEntregador(0L);
+                        Intent it = new Intent(MenuInicialActivity.this, ListaApontActivity.class);
+                        startActivity(it);
+                        finish();
+                    }
+                    break;
+                case "CONFIGURAÇÃO":
+                    Intent it = new Intent(MenuInicialActivity.this, ConfigActivity.class);
                     startActivity(it);
                     finish();
-                }
-            } else if (text.equals("CONFIGURAÇÃO")) {
-                Intent it = new Intent(MenuInicialActivity.this, ConfigActivity.class);
-                startActivity(it);
-                finish();
-            } else if (text.equals("ATUALIZAR ESTOQUE")) {
+                    break;
+                case "ATUALIZAR ESTOQUE":
 
-                if (connectNetwork) {
+                    if (connectNetwork) {
 
-                    progressBar = new ProgressDialog(MenuInicialActivity.this);
-                    progressBar.setCancelable(true);
-                    progressBar.setMessage("ATUALIZANDO ...");
-                    progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                    progressBar.setProgress(0);
-                    progressBar.setMax(100);
-                    progressBar.show();
+                        progressBar = new ProgressDialog(MenuInicialActivity.this);
+                        progressBar.setCancelable(true);
+                        progressBar.setMessage("ATUALIZANDO ...");
+                        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        progressBar.setProgress(0);
+                        progressBar.setMax(100);
+                        progressBar.show();
 
-                    pepiContext.getEntregaEPICTR().atualEpi(MenuInicialActivity.this, progressBar);
+                        pepiContext.getEntregaEPICTR().atualEpi(MenuInicialActivity.this, progressBar);
 
-                } else {
+                    } else {
 
-                    AlertDialog.Builder alerta = new AlertDialog.Builder( MenuInicialActivity.this);
-                    alerta.setTitle("ATENÇÃO");
-                    alerta.setMessage("FALHA NA CONEXÃO DE DADOS. O CELULAR ESTA SEM SINAL. POR FAVOR, TENTE NOVAMENTE QUANDO O CELULAR ESTIVE COM SINAL.");
-                    alerta.setPositiveButton("OK", (dialog, which) -> {
-                    });
-                    alerta.show();
+                        AlertDialog.Builder alerta = new AlertDialog.Builder(MenuInicialActivity.this);
+                        alerta.setTitle("ATENÇÃO");
+                        alerta.setMessage("FALHA NA CONEXÃO DE DADOS. O CELULAR ESTA SEM SINAL. POR FAVOR, TENTE NOVAMENTE QUANDO O CELULAR ESTIVE COM SINAL.");
+                        alerta.setPositiveButton("OK", (dialog, which) -> {
+                        });
+                        alerta.show();
 
-                }
+                    }
 
-            } else if (text.equals("SAIR")) {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                    break;
+                case "SAIR":
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    break;
             }
         });
 

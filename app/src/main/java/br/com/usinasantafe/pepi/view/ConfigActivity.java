@@ -64,26 +64,18 @@ public class ConfigActivity extends ActivityGeneric {
 
             if(!editTextNroAparelhoConfig.getText().toString().equals("")) {
 
-
                 progressBar = new ProgressDialog(v.getContext());
                 progressBar.setCancelable(true);
                 progressBar.setMessage("Salvando Configurações Inicial...");
                 progressBar.show();
                 pepiContext.getConfigCTR().salvarToken(BuildConfig.VERSION_NAME, Long.valueOf(editTextNroAparelhoConfig.getText().toString()), ConfigActivity.this, progressBar);
 
-//                pepiContext.getConfigCTR().salvarConfig(editTextNroAparelhoConfig.getText().toString());
-//
-//                Intent it = new Intent(ConfigActivity.this, MenuInicialActivity.class);
-//                startActivity(it);
-//                finish();
-
             } else {
 
                 AlertDialog.Builder alerta = new AlertDialog.Builder(ConfigActivity.this);
                 alerta.setTitle("ATENÇÃO");
                 alerta.setMessage("POR FAVOR! DIGITE O NUMERO DA LINHA.");
-                alerta.setPositiveButton("OK", (dialog, which) -> {
-                });
+                alerta.setPositiveButton("OK", (dialog, which) -> {});
                 alerta.show();
 
             }

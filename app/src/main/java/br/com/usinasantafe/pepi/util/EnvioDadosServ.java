@@ -71,14 +71,13 @@ public class EnvioDadosServ {
 		if(result.trim().equals("GRAVOU")){
 			EntregaEPICTR entregaEPICTR = new EntregaEPICTR();
 			entregaEPICTR.delEntregaEPI();
-		}
-		else{
+			status = 3;
+		} else {
 			status = 1;
 		}
 	}
 
 	public void envioDados() {
-		status = 1;
 		if(ActivityGeneric.connectNetwork) {
 			status = 2;
 			envioEntregaEPI();
@@ -88,11 +87,7 @@ public class EnvioDadosServ {
 	}
 
 	public boolean verifDadosEnvio() {
-		if (!verifDadosEntregaEPI()){
-			return false;
-		} else {
-			return true;
-		}
+		return verifDadosEntregaEPI();
 	}
 
 }
